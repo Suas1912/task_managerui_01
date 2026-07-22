@@ -38,7 +38,10 @@ class ApiCaller {
   static Future<ApiResponse> postRequest({required String url,Map<String,dynamic>?body}) async {
     try {
       Uri uri = Uri.parse(url);
-      Response response = await post(uri);
+      Response response = await post(uri,
+          //ki dhoroner data pathabo sheita bole deuyar jonne header use kora hoy
+          headers: {'content-type':'application/json'},
+          body: jsonEncode(body));
 
 
       final int statusCode = response.statusCode;

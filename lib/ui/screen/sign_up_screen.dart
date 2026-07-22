@@ -1,6 +1,8 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:helpful_flutter/data/services/api_caller.dart';
+import 'package:helpful_flutter/data/utils/urls.dart';
 import 'login_screen.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -17,6 +19,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController _passwordTEController = TextEditingController();
   final TextEditingController _mobileTEController = TextEditingController();
   final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
+  bool _signUpInProgress = false;
 
   @override
   Widget build(BuildContext context) {
@@ -100,10 +103,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     },
                   ),
                   const SizedBox(height: 24),
-                  FilledButton(
-                    onPressed: (){},
-                    //_afterSignup,
-                    child: Text('Join'),
+                  Visibility(
+                    visible: _signUpInProgress==false,
+                    replacement: Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                    child: FilledButton(
+                      onPressed: (){},
+                      //_afterSignup,
+                      child: Text('Join'),
+                    ),
                   ),
                   const SizedBox(height: 32),
                   Center(
@@ -137,6 +146,38 @@ class _SignUpScreenState extends State<SignUpScreen> {
       ),
     );
   }
+
+  void _onTapSubmitonButton(){
+      if(_formkey.currentState!.validate()){
+          _signUp();
+      }
+  }
+  Future<void> _signUp() async {
+      _signUpInProgress=true;
+      setState(() {});
+      Map<String,dynamic> requestBody={
+          "email":_emailTEController.text.trim(),
+          "firstName":_firstnameTEController.text.trim(),
+        "lastName":_lastTEController.text.trim(),
+        "mobile":_mobileTEController.text.trim(),
+        "password":_passwordTEController.text,
+      };
+    final ApiResponse response = await ApiCaller.postRequest(
+      url: Urls.registratioUrl,
+      body: requestBody
+    );
+    _signUpInProgress=false;
+    setState(() {});
+    if(response.isSucccess){
+      _clearTextFields();
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('registration success!! Please Log in ')));
+    }
+    else{
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(response.errorMessage)));
+    }
+  }
   void _onTapLogin(){
     Navigator.pop(context);
   }
@@ -144,6 +185,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
     Navigator.pushAndRemoveUntil(context,MaterialPageRoute(builder: (context)=>LoginScreen()),
             (predicate)=>false);
   }*/
+  void _clearTextFields(){
+    _emailTEController.clear();
+    _firstnameTEController.clear();
+    _lastTEController.clear();
+    _passwordTEController.clear();_mobileTEController.clear();
+  }
   @override
   void dispose(){
     _emailTEController.dispose();
