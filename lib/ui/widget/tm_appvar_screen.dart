@@ -1,20 +1,30 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:helpful_flutter/ui/contollers/auth_contoller.dart';
+import 'package:helpful_flutter/ui/screen/login_screen.dart';
 import 'package:helpful_flutter/ui/screen/update_screen.dart';
 
-class TMAppVar extends StatelessWidget implements PreferredSizeWidget {
+class TMAppVar extends StatefulWidget implements PreferredSizeWidget {
   const TMAppVar({
     super.key, this.fromUpdateProfile,
   });
   final bool? fromUpdateProfile;
 
   @override
+  State<TMAppVar> createState() => _TMAppVarState();
+
+  @override
+  Size get preferredSize => Size.fromHeight(kToolbarHeight);
+}
+
+class _TMAppVarState extends State<TMAppVar> {
+  @override
   Widget build(BuildContext context) {
     return AppBar(
       backgroundColor: Colors.green,
       title: GestureDetector(
         onTap: (){
-          if(fromUpdateProfile ?? false){
+          if(widget.fromUpdateProfile ?? false){
             return;
           }
           Navigator.push(context,MaterialPageRoute(builder: (context)=>UpdateScreen()));
@@ -34,10 +44,12 @@ class TMAppVar extends StatelessWidget implements PreferredSizeWidget {
         ),
       ),
       actions: [
-        IconButton(onPressed: (){},icon: Icon(Icons.logout),),
+        IconButton(onPressed:_signOut,icon: Icon(Icons.logout),),
       ],
     );
   }
-  @override
-  Size get preferredSize => Size.fromHeight(kToolbarHeight);
+  Future<void> _signOut() async {
+    await AuthContoller.clearUserData();
+    Navigator.pushAndRemoveUntil(context,MaterialPageRoute(builder: (context)=>LoginScreen()));
+  }
 }

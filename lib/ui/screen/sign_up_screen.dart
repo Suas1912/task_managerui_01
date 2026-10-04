@@ -163,7 +163,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         "password":_passwordTEController.text,
       };
     final ApiResponse response = await ApiCaller.postRequest(
-      url: Urls.registratioUrl,
+      url: Urls.registrationUrl,
       body: requestBody
     );
     _signUpInProgress=false;

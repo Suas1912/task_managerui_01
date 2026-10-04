@@ -9,7 +9,7 @@ class ApiCaller {
 
 
       final int statusCode = response.statusCode;
-      if (response.body == 200) {
+      if (statusCode == 200) {
         final decodedData = jsonDecode(response.body);
         return ApiResponse(
           isSucccess: true,
@@ -41,8 +41,8 @@ class ApiCaller {
       Response response = await post(uri,
           //ki dhoroner data pathabo sheita bole deuyar jonne header use kora hoy
           headers: {'content-type':'application/json'},
-          body: jsonEncode(body));
-
+          body: jsonEncode(body)
+      );
 
       final int statusCode = response.statusCode;
       if (statusCode == 200 || statusCode==201) {
@@ -82,6 +82,6 @@ class ApiResponse {
     required this.isSucccess,
     required this.responseCode,
     required this.responseData,
-    this.errorMessage='Something went Worng',
+    this.errorMessage='Something went Wrong',
   });
 }

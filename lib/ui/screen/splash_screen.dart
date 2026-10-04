@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:helpful_flutter/ui/contollers/auth_contoller.dart';
 import 'package:helpful_flutter/ui/screen/login_screen.dart';
+
+import 'main_navbar_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -17,13 +20,19 @@ class _SplashScreenState extends State<SplashScreen> {
 
   Future<void> _moveToNextScreen() async {
     await Future.delayed(const Duration(seconds: 3));
-
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
+    final bool isLoggedIn=await AuthContoller.isUserAlreadyLoggedIn();
+    if(isLoggedIn){
+      await AuthContoller.getUserData();
+      Navigator.pushReplacement(context, MaterialPageRoute(
+        builder: (_) => const MainNavbarScreen(),
+      ),
+      );
+    }else{
+      Navigator.pushReplacement(context, MaterialPageRoute(
         builder: (_) => const LoginScreen(),
       ),
-    );
+      );
+    }
   }
 
   @override
