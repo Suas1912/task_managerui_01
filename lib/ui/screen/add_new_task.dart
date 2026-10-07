@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../widget/tm_appvar_screen.dart';
 
@@ -10,50 +9,64 @@ class AddNewTask extends StatefulWidget {
 }
 
 class _AddNewTaskState extends State<AddNewTask> {
-  final TextEditingController _titleTEController=TextEditingController();
-  final TextEditingController _descriptionTEController=TextEditingController();
-  final GlobalKey<FormState> _formkey=GlobalKey<FormState>();
+  final _titleTEController = TextEditingController();
+  final _descriptionTEController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: TMAppVar(),
+      appBar: const TMAppVar(),
       body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.all(16),
-          child: Form(
-            key: _formkey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 32),
-                Text('Add New Task',style: Theme.of(context).textTheme.titleLarge,),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: _titleTEController,
-                  textInputAction: TextInputAction.next,
-                  decoration:InputDecoration(
-                    hintText: 'Title',
-                  ),
+        padding: const EdgeInsets.all(16),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 32),
+              Text('Add New Task', style: Theme.of(context).textTheme.titleLarge),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _titleTEController,
+                textInputAction: TextInputAction.next,
+                decoration: const InputDecoration(hintText: 'Title'),
+                validator: (value) => value?.trim().isEmpty ?? true ? 'Enter a task title' : null,
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _descriptionTEController,
+                decoration: const InputDecoration(hintText: 'Description'),
+                maxLines: 4,
+                validator: (value) => value?.trim().isEmpty ?? true ? 'Enter a task description' : null,
+              ),
+              const SizedBox(height: 36),
+              SizedBox(
+                width: double.infinity,
+                child: FilledButton(
+                  onPressed: _addTask,
+                  child: const Text('Add'),
                 ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: _descriptionTEController,
-                  decoration:InputDecoration(
-                    hintText: 'Description',
-                  ),
-                  maxLines: 4,
-                ),
-                const SizedBox(height: 36),
-                FilledButton(onPressed: (){},child: Text('Add'),)
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
     );
   }
-  void dispose(){
-    _descriptionTEController.dispose();_titleTEController.dispose();
+
+  void _addTask() {
+    if (!(_formKey.currentState?.validate() ?? false)) return;
+    Navigator.pop(context, {
+      'title': _titleTEController.text.trim(),
+      'description': _descriptionTEController.text.trim(),
+    });
+  }
+
+  @override
+  void dispose() {
+    _descriptionTEController.dispose();
+    _titleTEController.dispose();
     super.dispose();
   }
 }
